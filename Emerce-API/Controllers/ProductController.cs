@@ -1,4 +1,5 @@
 ﻿using Emerce_Model;
+using Emerce_Model.Product;
 using Emerce_Service.Product;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,27 +17,33 @@ namespace Emerce_API.Controllers
         }
         //Insert Product
         [HttpPost]
-        public General<Emerce_Model.Product.ProductCreateModel> Insert( [FromBody] Emerce_Model.Product.ProductCreateModel newProduct )
+        public General<ProductCreateModel> Insert( [FromBody] ProductCreateModel newProduct )
         {
             return productService.Insert(newProduct);
         }
 
         //Get Product
-        //[EnableCors("AllowAllHeaders")]
         [HttpGet]
-        public General<Emerce_Model.Product.ProductViewModel> Get()
+        public General<ProductViewModel> Get()
         {
             return productService.Get();
         }
+        //Get Product By Id
+        [HttpGet("{id}")]
+        public General<ProductViewModel> GetById( int id )
+        {
+            return productService.GetById(id);
+        }
+
         //Update Product
         [HttpPut("{id}")]
-        public General<Emerce_Model.Product.ProductUpdateModel> Update( [FromBody] Emerce_Model.Product.ProductUpdateModel updatedProduct, int id )
+        public General<ProductUpdateModel> Update( [FromBody] ProductUpdateModel updatedProduct, int id )
         {
             return productService.Update(updatedProduct, id);
         }
         //Delete Product
         [HttpDelete("{id}")]
-        public General<Emerce_Model.Product.ProductViewModel> Delete( int id )
+        public General<ProductViewModel> Delete( int id )
         {
             return productService.Delete(id);
         }

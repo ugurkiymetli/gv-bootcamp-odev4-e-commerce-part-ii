@@ -80,7 +80,7 @@ namespace Emerce_Service.Category
                 data.Name = String.IsNullOrEmpty(updatedCategory.Name.Trim()) ? data.Name : updatedCategory.Name;
 
                 service.SaveChanges();
-                result.Entity = mapper.Map<CategoryViewModel>(updatedCategory);
+                result.Entity = mapper.Map<CategoryViewModel>(data);
                 result.IsSuccess = true;
             }
             return result;

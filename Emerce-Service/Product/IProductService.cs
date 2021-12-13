@@ -1,12 +1,13 @@
 ﻿using Emerce_Model;
-
+using Emerce_Model.Product;
 namespace Emerce_Service.Product
 {
     public interface IProductService
     {
-        public General<Emerce_Model.Product.ProductCreateModel> Insert( Emerce_Model.Product.ProductCreateModel newProduct );
-        public General<Emerce_Model.Product.ProductViewModel> Get();
-        public General<Emerce_Model.Product.ProductViewModel> Delete( int id );
-        public General<Emerce_Model.Product.ProductUpdateModel> Update( Emerce_Model.Product.ProductUpdateModel updatedProduct, int id );
+        public General<ProductCreateModel> Insert( ProductCreateModel newProduct );
+        public General<ProductViewModel> Get();
+        public General<ProductViewModel> GetById( int id );
+        public General<ProductViewModel> Delete( int id );
+        public General<ProductUpdateModel> Update( ProductUpdateModel updatedProduct, int id );
     }
 }

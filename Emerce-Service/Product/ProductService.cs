@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Emerce_DB;
-using Emerce_Extension;
 using Emerce_Model;
 using Emerce_Model.Product;
 using Emerce_Service.Validator;
@@ -61,16 +60,34 @@ namespace Emerce_Service.Product
                 result.List = mapper.Map<List<ProductViewModel>>(data);
 
                 //Using extension ToTurkishLira here. Takes ProductViewModel item as input and converts price to Turkish Lira type.
-                foreach ( var item in result.List )
-                {
-                    item.ToTurkishLira();
-                }
+                //foreach ( var item in result.List )
+                //{
+                //    item.ToTurkishLira();
+                //}
                 result.IsSuccess = true;
                 result.TotalCount = data.Count();
             }
             return result;
         }
-
+        //Get Product By Id
+        public General<ProductViewModel> GetById( int id )
+        {
+            var result = new General<ProductViewModel>();
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.Product.Include(p => p.Category)
+                    .Include(p => p.IuserNavigation)
+                    .SingleOrDefault(p => p.Id == id && p.IsActive && !p.IsDeleted);
+                if ( data is null )
+                {
+                    result.ExceptionMessage = $"Product with id:{id} is not found";
+                    return result;
+                }
+                result.Entity = mapper.Map<ProductViewModel>(data);
+                result.IsSuccess = true;
+            }
+            return result;
+        }
         //Update Product
         public General<ProductUpdateModel> Update( ProductUpdateModel updatedProduct, int id )
         {
@@ -135,4 +152,3 @@ namespace Emerce_Service.Product
         }
     }
 }
-
