@@ -29,9 +29,12 @@ namespace Emerce_API
             var _mappingProfile = new MapperConfiguration(mp => { mp.AddProfile(new MappingProfile()); });
             IMapper mapper = _mappingProfile.CreateMapper();
             services.AddSingleton(mapper);
+            //services for user,product,category
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ICategoryService, CategoryService>();
+            //memory cache
+            services.AddMemoryCache();
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowAllHeaders,

@@ -15,19 +15,24 @@ namespace Emerce_Service.User
             mapper = _mapper;
         }
 
-        public General<UserLoginModel> Login( UserLoginModel user )
+        public General<UserViewModel> Login( UserLoginModel loginUser )
         {
-            var result = new General<UserLoginModel>();
-            var model = mapper.Map<Emerce_DB.Entities.User>(user);
+            var result = new General<UserViewModel>();
+            //var model = mapper.Map<Emerce_DB.Entities.User>(user);
             using ( var service = new EmerceContext() )
             {
-                bool login = service.User
-                   .Any(u => !u.IsDeleted && u.IsActive && u.Username == user.Username && u.Password == user.Password);
-                model.Id = service.User.Where(u => u.Username == user.Username && u.Password == user.Password).Select(u => u.Id).FirstOrDefault();
-                result.IsSuccess = login;
-                result.Entity = mapper.Map<UserLoginModel>(model);
+                var data = service.User.FirstOrDefault(u => !u.IsDeleted && u.IsActive && u.Username == loginUser.Username && u.Password == loginUser.Password);
+                if ( data is null )
+                {
+                    result.ExceptionMessage = $"User '{loginUser.Username}' not found or password is wrong.";
+                    return result;
+                }
+                if ( data is not null )
+                {
+                    result.IsSuccess = true;
+                    result.Entity = mapper.Map<UserViewModel>(data);
+                }
             }
-            result.Entity.Password = "";
             return result;
         }
 
@@ -38,6 +43,7 @@ namespace Emerce_Service.User
             using ( var service = new EmerceContext() )
             {
                 model.Idatetime = DateTime.Now;
+                model.IsActive = true;
                 service.User.Add(model);
                 service.SaveChanges();
                 result.Entity = mapper.Map<UserCreateModel>(model);
@@ -61,44 +67,7 @@ namespace Emerce_Service.User
             return result;
         }
 
-        public General<UserUpdateModel> Update( UserUpdateModel updatedUser, int id )
-        {
-            var result = new General<UserUpdateModel>();
-            using ( var service = new EmerceContext() )
-            {
-                var data = service.User.SingleOrDefault(u => u.Id == id);
-                if ( data is null )
-                {
-                    result.ExceptionMessage = $"User with id: {id} is not found";
-                    return result;
-                }
-                data.Username = String.IsNullOrEmpty(updatedUser.Username.Trim()) ? data.Username : updatedUser.Username;
-                data.Email = String.IsNullOrEmpty(updatedUser.Email.Trim()) ? data.Email : updatedUser.Email;
-                data.Password = String.IsNullOrEmpty(updatedUser.Password.Trim()) ? data.Password : updatedUser.Password;
-                updatedUser.Udatetime = DateTime.Now;
-
-                service.SaveChanges();
-                result.Entity = mapper.Map<UserUpdateModel>(updatedUser);
-                result.IsSuccess = true;
-            }
-            return result;
-        }
-
-        //void user delete
-        /*public void Delete( int id )
-        {
-            using ( var service = new EmerceContext() )
-            {
-                var data = service.User.SingleOrDefault(u => u.Id == id);
-                if ( data is null )
-                    //throw new InvalidOperationException("This user is not found!!");
-                    return;
-                service.User.Remove(data);
-                service.SaveChanges();
-            }
-        }*/
-        //user delete
-        public General<UserViewModel> Delete( int id )
+        public General<UserViewModel> Update( UserUpdateModel updatedUser, int id )
         {
             var result = new General<UserViewModel>();
             using ( var service = new EmerceContext() )
@@ -109,8 +78,32 @@ namespace Emerce_Service.User
                     result.ExceptionMessage = $"User with id: {id} is not found";
                     return result;
                 }
+                data.Udatetime = DateTime.Now;
+                data.Username = String.IsNullOrEmpty(updatedUser.Username.Trim()) ? data.Username : updatedUser.Username;
+                data.Email = String.IsNullOrEmpty(updatedUser.Email.Trim()) ? data.Email : updatedUser.Email;
+                data.Password = String.IsNullOrEmpty(updatedUser.Password.Trim()) ? data.Password : updatedUser.Password;
 
-                service.User.Remove(data);
+                service.SaveChanges();
+                result.Entity = mapper.Map<UserViewModel>(updatedUser);
+                result.IsSuccess = true;
+            }
+            return result;
+        }
+
+        public General<UserViewModel> Delete( int id )
+        {
+            var result = new General<UserViewModel>();
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.User.SingleOrDefault(u => u.Id == id);
+                if ( data is null || data.IsDeleted )
+                {
+                    result.ExceptionMessage = $"User with id: {id} is not found";
+                    return result;
+                }
+                data.IsDeleted = true;
+                data.IsActive = false;
+                //service.User.Remove(data);
                 service.SaveChanges();
                 result.Entity = mapper.Map<UserViewModel>(data);
                 result.IsSuccess = true;

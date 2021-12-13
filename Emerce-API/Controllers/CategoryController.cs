@@ -1,4 +1,5 @@
 ﻿using Emerce_Model;
+using Emerce_Model.Category;
 using Emerce_Service.Category;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,13 +17,13 @@ namespace Emerce_API.Controllers
         }
         //Insert Category
         [HttpPost]
-        public General<Emerce_Model.Category.CategoryCreateModel> Insert( [FromBody] Emerce_Model.Category.CategoryCreateModel newCategory )
+        public General<CategoryViewModel> Insert( [FromBody] CategoryCreateModel newCategory )
         {
             return categoryService.Insert(newCategory);
         }
         //Get Category
         [HttpGet]
-        public General<Emerce_Model.Category.CategoryViewModel> Get()
+        public General<CategoryViewModel> Get()
         {
             return categoryService.Get();
         }
@@ -30,7 +31,7 @@ namespace Emerce_API.Controllers
         //Update Category
 
         [HttpPut("{id}")]
-        public General<Emerce_Model.Category.CategoryUpdateModel> Update( [FromBody] Emerce_Model.Category.CategoryUpdateModel updatedCategory, int id )
+        public General<CategoryViewModel> Update( [FromBody] CategoryUpdateModel updatedCategory, int id )
         {
             return categoryService.Update(updatedCategory, id);
         }
@@ -38,7 +39,7 @@ namespace Emerce_API.Controllers
         //Delete User = throws ex if user is not found
 
         [HttpDelete("{id}")]
-        public General<Emerce_Model.Category.CategoryViewModel> Delete( int id )
+        public General<CategoryViewModel> Delete( int id )
         {
             return categoryService.Delete(id);
         }

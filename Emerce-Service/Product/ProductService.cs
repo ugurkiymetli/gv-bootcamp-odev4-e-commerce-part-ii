@@ -39,6 +39,7 @@ namespace Emerce_Service.Product
                     return result;
                 }
                 model.Idatetime = DateTime.Now;
+                model.IsActive = true;
                 service.Product.Add(model);
                 service.SaveChanges();
                 result.Entity = mapper.Map<ProductCreateModel>(model);
@@ -116,12 +117,14 @@ namespace Emerce_Service.Product
             using ( var service = new EmerceContext() )
             {
                 var data = service.Product.SingleOrDefault(p => p.Id == id);
-                if ( data is null )
+                if ( data is null || data.IsDeleted )
                 {
                     result.ExceptionMessage = $"Product with id: {id} is not found";
                     return result;
                 }
-                service.Product.Remove(data);
+                //service.Product.Remove(data);
+                data.IsDeleted = true;
+                data.IsActive = false;
                 service.SaveChanges();
                 result.Entity = mapper.Map<ProductViewModel>(data);
 

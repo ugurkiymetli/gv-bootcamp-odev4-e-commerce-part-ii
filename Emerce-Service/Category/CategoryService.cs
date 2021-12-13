@@ -19,16 +19,22 @@ namespace Emerce_Service.Category
         }
 
         //Insert Category
-        public General<CategoryCreateModel> Insert( CategoryCreateModel newCategory )
+        public General<CategoryViewModel> Insert( CategoryCreateModel newCategory )
         {
-            var result = new General<CategoryCreateModel>();
+            var result = new General<CategoryViewModel>();
             var model = mapper.Map<Emerce_DB.Entities.Category>(newCategory);
             using ( var service = new EmerceContext() )
             {
+                if ( !IsValidUser(service, model.Iuser) )
+                {
+                    result.ExceptionMessage = $"User with id:{model.Iuser} is not found";
+                    return result;
+                }
                 model.Idatetime = DateTime.Now;
+                model.IsActive = true;
                 service.Category.Add(model);
                 service.SaveChanges();
-                result.Entity = mapper.Map<Emerce_Model.Category.CategoryCreateModel>(model);
+                result.Entity = mapper.Map<CategoryViewModel>(model);
                 result.IsSuccess = true;
             }
             return result;
@@ -52,9 +58,9 @@ namespace Emerce_Service.Category
         }
 
         //Update Category
-        public General<CategoryUpdateModel> Update( CategoryUpdateModel updatedCategory, int id )
+        public General<CategoryViewModel> Update( CategoryUpdateModel updatedCategory, int id )
         {
-            var result = new General<CategoryUpdateModel>();
+            var result = new General<CategoryViewModel>();
             using ( var service = new EmerceContext() )
             {
                 var data = service.Category.SingleOrDefault(c => c.Id == id);
@@ -74,7 +80,7 @@ namespace Emerce_Service.Category
                 data.Name = String.IsNullOrEmpty(updatedCategory.Name.Trim()) ? data.Name : updatedCategory.Name;
 
                 service.SaveChanges();
-                result.Entity = mapper.Map<CategoryUpdateModel>(updatedCategory);
+                result.Entity = mapper.Map<CategoryViewModel>(updatedCategory);
                 result.IsSuccess = true;
             }
             return result;
@@ -88,7 +94,7 @@ namespace Emerce_Service.Category
             using ( var service = new EmerceContext() )
             {
                 var data = service.Category.SingleOrDefault(c => c.Id == id);
-                if ( data is null )
+                if ( data is null || data.IsDeleted )
                 {
                     result.ExceptionMessage = $"Category with id: {id} is not found";
                     return result;
@@ -99,7 +105,9 @@ namespace Emerce_Service.Category
                     result.ExceptionMessage = $"Category with id: {id} has products and cannot be deleted!";
                     return result;
                 }
-                service.Category.Remove(data);
+                //service.Category.Remove(data);
+                data.IsActive = false;
+                data.IsDeleted = true;
                 service.SaveChanges();
                 result.Entity = mapper.Map<CategoryViewModel>(data);
                 result.IsSuccess = true;

@@ -8,7 +8,6 @@ namespace Emerce_Model.User
         public string Username { get; set; }
 
         [StringLength(50, ErrorMessage = "{0} cannot be more than {1} characters long.")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
 
         [StringLength(50, ErrorMessage = "{0} cannot be more than {1} characters long.")]
