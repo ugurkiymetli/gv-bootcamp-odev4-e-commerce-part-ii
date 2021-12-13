@@ -14,7 +14,7 @@ namespace Emerce_Service.User
         {
             mapper = _mapper;
         }
-
+        //Login User
         public General<UserViewModel> Login( UserLoginModel loginUser )
         {
             var result = new General<UserViewModel>();
@@ -35,7 +35,7 @@ namespace Emerce_Service.User
             }
             return result;
         }
-
+        //Insert User
         public General<UserCreateModel> Insert( UserCreateModel newUser )
         {
             var result = new General<UserCreateModel>();
@@ -52,6 +52,7 @@ namespace Emerce_Service.User
             return result;
         }
 
+        //Get User List
         public General<UserViewModel> Get()
         {
             var result = new General<UserViewModel>();
@@ -67,6 +68,27 @@ namespace Emerce_Service.User
             return result;
         }
 
+
+        //Get User By Id
+        public General<UserViewModel> GetById( int id )
+        {
+            var result = new General<UserViewModel>();
+
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.User.SingleOrDefault(u => u.Id == id && u.IsActive && !u.IsDeleted);
+                if ( data is null )
+                {
+                    result.ExceptionMessage = $"User with id:{id} is not found";
+                    return result;
+                }
+                result.IsSuccess = true;
+                result.Entity = mapper.Map<UserViewModel>(data);
+            }
+            return result;
+        }
+
+        //Update User
         public General<UserViewModel> Update( UserUpdateModel updatedUser, int id )
         {
             var result = new General<UserViewModel>();
@@ -90,6 +112,7 @@ namespace Emerce_Service.User
             return result;
         }
 
+        //Delete User
         public General<UserViewModel> Delete( int id )
         {
             var result = new General<UserViewModel>();

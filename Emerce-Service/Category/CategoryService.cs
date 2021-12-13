@@ -57,6 +57,26 @@ namespace Emerce_Service.Category
             return result;
         }
 
+        //Get Category By Id
+        public General<CategoryViewModel> GetById( int id )
+        {
+            var result = new General<CategoryViewModel>();
+
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.Category.Include(c => c.IuserNavigation)
+                    .SingleOrDefault(c => c.Id == id && c.IsActive && !c.IsDeleted);
+                if ( data is null )
+                {
+                    result.ExceptionMessage = $"Category with id:{id} is not found";
+                    return result;
+                }
+                result.IsSuccess = true;
+                result.Entity = mapper.Map<CategoryViewModel>(data);
+            }
+            return result;
+        }
+
         //Update Category
         public General<CategoryViewModel> Update( CategoryUpdateModel updatedCategory, int id )
         {

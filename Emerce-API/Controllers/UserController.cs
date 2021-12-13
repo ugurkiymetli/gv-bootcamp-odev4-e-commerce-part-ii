@@ -64,6 +64,14 @@ namespace Emerce_API.Controllers
         {
             return userService.Get();
         }
+
+        //Get User By Id
+        [HttpGet("{id}")]
+        public General<UserViewModel> GetById( int id )
+        {
+            return userService.GetById(id);
+        }
+
         //Update User
         [HttpPut("{id}")]
         public General<UserViewModel> Update( [FromBody] UserUpdateModel updatedUser, int id )

@@ -27,7 +27,12 @@ namespace Emerce_API.Controllers
         {
             return categoryService.Get();
         }
-
+        //Get Category By Id
+        [HttpGet("{id}")]
+        public General<CategoryViewModel> GetById( int id )
+        {
+            return categoryService.GetById(id);
+        }
         //Update Category
 
         [HttpPut("{id}")]
