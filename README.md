@@ -17,6 +17,9 @@ I made a simple UI for this project with React <3. You can check it out **[here]
 
 <sub>keep in mind that _https://localhost:44359_ can change for you.<sub>
 
+<details>
+<summary>Week 3 -  Assignment</summary>
+
 ## Categories
 
 ## Create a new category
@@ -570,13 +573,24 @@ curl --location --request DELETE 'https://localhost:44359/api/Thing/1'
 
 <!-- Created by UgurKiymetli -->
 
-## Tech Stack
+</details>
 
-**Backend:** .Net Core
+<details>
+<summary>Week 4 - Assignment</summary>
 
-**Database:** MS Sql
+```
+work in progress
+```
 
-## Acknowledgements
+</details>
+
+<br>
+
+### Tech Stack
+
+**Backend:** .Net Core / **Frontend:** ReactJS / **Database:** MSSql
+
+### Acknowledgements
 
 - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
 - [Awesome README](https://github.com/matiassingers/awesome-readme)
