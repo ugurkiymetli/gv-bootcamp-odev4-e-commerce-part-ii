@@ -21,10 +21,13 @@ namespace Emerce_Service.User
             var model = mapper.Map<Emerce_DB.Entities.User>(user);
             using ( var service = new EmerceContext() )
             {
+                bool login = service.User
+                   .Any(u => !u.IsDeleted && u.IsActive && u.Username == user.Username && u.Password == user.Password);
+                model.Id = service.User.Where(u => u.Username == user.Username && u.Password == user.Password).Select(u => u.Id).FirstOrDefault();
+                result.IsSuccess = login;
                 result.Entity = mapper.Map<UserLoginModel>(model);
-                result.IsSuccess = service.User
-                    .Any(u => !u.IsDeleted && u.IsActive && u.Username == user.Username && u.Password == user.Password);
             }
+            result.Entity.Password = "";
             return result;
         }
 

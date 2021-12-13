@@ -12,6 +12,8 @@ namespace Emerce_API.Infrastructure
             //user login
             CreateMap<Emerce_DB.Entities.User, Emerce_Model.User.UserLoginModel>();
             CreateMap<Emerce_Model.User.UserLoginModel, Emerce_DB.Entities.User>();
+            //CreateMap<Emerce_Model.User.UserViewModel, Emerce_Model.User.UserLoginModel>();
+            //CreateMap<Emerce_Model.User.UserLoginModel, Emerce_Model.User.UserViewModel>();
             //user view
             CreateMap<Emerce_Model.User.UserViewModel, Emerce_DB.Entities.User>();
             CreateMap<Emerce_DB.Entities.User, Emerce_Model.User.UserViewModel>()
