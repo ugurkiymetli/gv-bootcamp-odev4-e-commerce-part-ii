@@ -9,67 +9,25 @@ namespace Emerce_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [LoginFilter]
     public class UserController : BaseController
     {
         private readonly IUserService userService;
-        private readonly IMemoryCache memoryCache;
+        //private readonly IMemoryCache memoryCache;
         public UserController( IUserService _userService, IMemoryCache _memoryCache ) : base(_memoryCache)
         {
             userService = _userService;
-            memoryCache = _memoryCache;
+            //memoryCache = _memoryCache;
         }
 
         //Insert User returns General Object with IsSuccess, ErrorList, Posted Data...
         [HttpPost]
         [Route("register")]
-        [LoginFilter]
         public General<UserViewModel> Insert( [FromBody] UserCreateModel newUser )
         {
-            //General<UserViewModel> response = new();
-            //if ( CurrentUser.Id <= 0 )
-            //{
-            //    response.ExceptionMessage = "Please login!";
-            //    return response;
-            //}
-            ////giving CurrentUser.Id to newUser.InsertedUserId
             newUser.Iuser = CurrentUser.Id;
             return userService.Insert(newUser);
         }
-
-        //Login User = takes General object and returns general object with isSuccess : true/false
-        [HttpPost]
-        [Route("login")]
-        //first get from memory cache. than check if entity not empty and user matches with login user.
-        //
-        public General<bool> Login( [FromBody] UserLoginModel loginUser )
-        {
-            General<bool> response = new() { Entity = false };
-            //gets loginUser from memoryCache directly.
-            //General<UserViewModel> _response = new() { Entity = memoryCache.Get<UserViewModel>("Login") };
-
-            //gets loginUser from Base.Controller.CurrentUser 
-            General<UserViewModel> _response = new() { Entity = CurrentUser };
-            if ( _response.Entity is not null && _response.Entity.Username == loginUser.Username )
-            {
-                response.Entity = true;
-                response.IsSuccess = true;
-            }
-            else
-            {
-                _response = userService.Login(loginUser);
-                if ( _response.IsSuccess )
-                {
-                    var cacheOptiopns = new MemoryCacheEntryOptions() { AbsoluteExpiration = System.DateTime.Now.AddMinutes(10) };
-                    memoryCache.Set("Login", _response.Entity, cacheOptiopns);
-                    response.Entity = true;
-                    response.IsSuccess = true;
-                }
-                response.ExceptionMessage = _response.ExceptionMessage;
-            }
-
-            return response;
-        }
-
 
         //Get All User = returns users in General object List
         [HttpGet]
@@ -89,6 +47,7 @@ namespace Emerce_API.Controllers
         [HttpPut("{id}")]
         public General<UserViewModel> Update( [FromBody] UserUpdateModel updatedUser, int id )
         {
+            updatedUser.Uuser = CurrentUser.Id;
             return userService.Update(updatedUser, id);
         }
         //Delete User = throws ex if user is not found

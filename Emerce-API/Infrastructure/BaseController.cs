@@ -19,6 +19,7 @@ namespace Emerce_API.Infrastructure
             {
                 return GetCurrentUser();
             }
+
         }
 
         private UserViewModel GetCurrentUser()
