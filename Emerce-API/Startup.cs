@@ -35,6 +35,7 @@ namespace Emerce_API
             services.AddTransient<ICategoryService, CategoryService>();
             //memory cache
             services.AddMemoryCache();
+            services.AddScoped<LoginFilter>();
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowAllHeaders,

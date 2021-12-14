@@ -5,7 +5,7 @@ namespace Emerce_Service.User
 {
     public interface IUserService
     {
-        public General<UserCreateModel> Insert( UserCreateModel newUser );
+        public General<UserViewModel> Insert( UserCreateModel newUser );
         public General<UserViewModel> Login( UserLoginModel user );
         public General<UserViewModel> Get();
         public General<UserViewModel> GetById( int id );

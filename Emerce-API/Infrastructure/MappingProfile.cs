@@ -16,8 +16,9 @@ namespace Emerce_API.Infrastructure
             //CreateMap<Emerce_Model.User.UserLoginModel, Emerce_Model.User.UserViewModel>();
             //user view
             CreateMap<Emerce_Model.User.UserViewModel, Emerce_DB.Entities.User>();
-            CreateMap<Emerce_DB.Entities.User, Emerce_Model.User.UserViewModel>()
-                .ForMember(dest => dest.Iuser, opt => opt.MapFrom(src => src.Email));
+            CreateMap<Emerce_DB.Entities.User, Emerce_Model.User.UserViewModel>();
+            //.ForMember(dest => dest.Iuser, opt => opt.MapFrom(src => src.Email));
+            //.ForMember(dest => dest.Iuser, opt => opt.MapFrom(src => src. IuserNavigation.Email));
 
 
             /* PRODUCT MAPS */

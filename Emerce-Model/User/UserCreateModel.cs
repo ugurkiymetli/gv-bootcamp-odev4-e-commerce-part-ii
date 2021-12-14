@@ -21,5 +21,8 @@ namespace Emerce_Model.User
         //[DataType(DataType.Password)]
         public string Password { get; set; }
         //public DateTime Idatetime { get; set; }
+
+        [Required(ErrorMessage = "{0} is required.")]
+        public int Iuser { get; set; }
     }
 }

@@ -36,9 +36,9 @@ namespace Emerce_Service.User
             return result;
         }
         //Insert User
-        public General<UserCreateModel> Insert( UserCreateModel newUser )
+        public General<UserViewModel> Insert( UserCreateModel newUser )
         {
-            var result = new General<UserCreateModel>();
+            var result = new General<UserViewModel>();
             var model = mapper.Map<Emerce_DB.Entities.User>(newUser);
             using ( var service = new EmerceContext() )
             {
@@ -46,7 +46,7 @@ namespace Emerce_Service.User
                 model.IsActive = true;
                 service.User.Add(model);
                 service.SaveChanges();
-                result.Entity = mapper.Map<UserCreateModel>(model);
+                result.Entity = mapper.Map<UserViewModel>(model);
                 result.IsSuccess = true;
             }
             return result;

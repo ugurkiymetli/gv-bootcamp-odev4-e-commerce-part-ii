@@ -1,4 +1,5 @@
-﻿using Emerce_Model;
+﻿using Emerce_API.Infrastructure;
+using Emerce_Model;
 using Emerce_Model.User;
 using Emerce_Service.User;
 using Microsoft.AspNetCore.Mvc;
@@ -8,11 +9,11 @@ namespace Emerce_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService userService;
         private readonly IMemoryCache memoryCache;
-        public UserController( IUserService _userService, IMemoryCache _memoryCache )
+        public UserController( IUserService _userService, IMemoryCache _memoryCache ) : base(_memoryCache)
         {
             userService = _userService;
             memoryCache = _memoryCache;
@@ -21,8 +22,17 @@ namespace Emerce_API.Controllers
         //Insert User returns General Object with IsSuccess, ErrorList, Posted Data...
         [HttpPost]
         [Route("register")]
-        public General<UserCreateModel> Insert( [FromBody] UserCreateModel newUser )
+        [LoginFilter]
+        public General<UserViewModel> Insert( [FromBody] UserCreateModel newUser )
         {
+            //General<UserViewModel> response = new();
+            //if ( CurrentUser.Id <= 0 )
+            //{
+            //    response.ExceptionMessage = "Please login!";
+            //    return response;
+            //}
+            ////giving CurrentUser.Id to newUser.InsertedUserId
+            newUser.Iuser = CurrentUser.Id;
             return userService.Insert(newUser);
         }
 
@@ -34,8 +44,11 @@ namespace Emerce_API.Controllers
         public General<bool> Login( [FromBody] UserLoginModel loginUser )
         {
             General<bool> response = new() { Entity = false };
-            General<UserViewModel> _response = new() { Entity = memoryCache.Get<UserViewModel>("Login") };
+            //gets loginUser from memoryCache directly.
+            //General<UserViewModel> _response = new() { Entity = memoryCache.Get<UserViewModel>("Login") };
 
+            //gets loginUser from Base.Controller.CurrentUser 
+            General<UserViewModel> _response = new() { Entity = CurrentUser };
             if ( _response.Entity is not null && _response.Entity.Username == loginUser.Username )
             {
                 response.Entity = true;
