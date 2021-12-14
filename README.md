@@ -10,8 +10,10 @@ I made a simple UI for this project with React <3. You can check it out **[here]
 
 ## Features
 
+- User Register,Login
 - Create, delete, update (User, Product, Category)
-- User Login
+- User must be logged in in order to view, create, update or delete items.
+- Products can be queried in pages. Pagination can be done with user inputs (pageSize, pageNumber).
 
 # API Reference
 
