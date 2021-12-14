@@ -18,20 +18,37 @@ namespace Emerce_API.Controllers
         {
             productService = _productService;
         }
-        //Insert Product
+        //Insert Product -  !!! PLEASE Change return type from ProductCreateModel to ProductViewModel !!!
         [HttpPost]
-        public General<ProductCreateModel> Insert( [FromBody] ProductCreateModel newProduct )
+        public General<ProductViewModel> Insert( [FromBody] ProductCreateModel newProduct )
         {
             newProduct.Iuser = CurrentUser.Id;
             return productService.Insert(newProduct);
         }
 
         //Get Product
+        //[HttpGet]
+
+        //public General<ProductViewModel> Get()
+        //{
+        //    return productService.Get();
+        //}
+
+        //Get Product 'Pagination'
         [HttpGet]
-        public General<ProductViewModel> Get()
+
+        public General<ProductViewModel> Get( [FromQuery] PaginationFilter filter )
         {
-            return productService.Get();
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var response = productService.Get(validFilter.PageSize, validFilter.PageNumber);
+            if ( filter.PageSize > filter.maxPageSize )
+            {
+                response.ExceptionMessage = $"Page number cannot be bigger than {filter.maxPageSize}";
+            }
+            return response;
         }
+
+
         //Get Product By Id
         [HttpGet("{id}")]
         public General<ProductViewModel> GetById( int id )

@@ -20,9 +20,9 @@ namespace Emerce_Service.Product
         }
 
         //Create Product (uses data annotations to validate data)
-        public General<ProductCreateModel> Insert( ProductCreateModel newProduct )
+        public General<ProductViewModel> Insert( ProductCreateModel newProduct )
         {
-            var result = new General<ProductCreateModel>();
+            var result = new General<ProductViewModel>();
             var model = mapper.Map<Emerce_DB.Entities.Product>(newProduct);
             using ( var service = new EmerceContext() )
             {
@@ -41,34 +41,55 @@ namespace Emerce_Service.Product
                 model.IsActive = true;
                 service.Product.Add(model);
                 service.SaveChanges();
-                result.Entity = mapper.Map<ProductCreateModel>(model);
+                result.Entity = mapper.Map<ProductViewModel>(model);
                 result.IsSuccess = true;
             }
             return result;
         }
         //Get Product List
-        public General<ProductViewModel> Get()
+        //public General<ProductViewModel> Get()
+        //{
+        //    var result = new General<ProductViewModel>();
+        //    using ( var service = new EmerceContext() )
+        //    {
+        //        var data = service.Product.Include(p => p.Category)
+        //            .Where(p => p.IsActive && !p.IsDeleted)
+        //            .Include(p => p.IuserNavigation)
+        //            .OrderBy(p => p.Id);
+
+        //        result.List = mapper.Map<List<ProductViewModel>>(data);
+
+        //        //Using extension ToTurkishLira here. Takes ProductViewModel item as input and converts price to Turkish Lira type.
+        //        //foreach ( var item in result.List )
+        //        //{
+        //        //    item.ToTurkishLira();
+        //        //}
+        //        result.IsSuccess = true;
+        //        result.TotalCount = data.Count();
+        //    }
+        //    return result;
+        //}
+
+        //Get Products - takes pageSize and pageNumber inputs, max pageSize is 25.
+        public General<ProductViewModel> Get( int pageSize, int pageNumber )
         {
             var result = new General<ProductViewModel>();
             using ( var service = new EmerceContext() )
             {
-                var data = service.Product.Include(p => p.Category)
+                var data = service.Product
+                    .Include(p => p.Category)
                     .Where(p => p.IsActive && !p.IsDeleted)
                     .Include(p => p.IuserNavigation)
+                    .Skip(( pageNumber - 1 ) * pageSize)
+                    .Take(pageSize)
                     .OrderBy(p => p.Id);
-
                 result.List = mapper.Map<List<ProductViewModel>>(data);
-
-                //Using extension ToTurkishLira here. Takes ProductViewModel item as input and converts price to Turkish Lira type.
-                //foreach ( var item in result.List )
-                //{
-                //    item.ToTurkishLira();
-                //}
                 result.IsSuccess = true;
                 result.TotalCount = data.Count();
             }
             return result;
         }
+
         //Get Product By Id
         public General<ProductViewModel> GetById( int id )
         {
@@ -150,5 +171,7 @@ namespace Emerce_Service.Product
 
             return result;
         }
+
+
     }
 }
