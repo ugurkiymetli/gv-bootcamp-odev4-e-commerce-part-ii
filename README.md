@@ -576,17 +576,200 @@ curl --location --request DELETE 'https://localhost:44359/api/Thing/1'
 <!-- Created by UgurKiymetli -->
 
 </details>
-
-<details>
-<summary>Week 4 - Assignment</summary>
-
-```
-work in progress
-```
-
-</details>
-
 <br>
+
+## Week 4 - Assignment
+
+# Auth
+
+## Login
+
+- User **must** be logged in to use all of the other endpoints. If user is not logged in it returns error.
+
+```
+Please login!
+```
+
+### Request
+
+`GET Auth/login`
+
+```
+curl --location --request POST 'https://localhost:44359/api/Auth/login' \
+     --header 'Content-Type: application/json' \
+     --data-raw
+     '{
+         "username": "user1",
+          "password": "veryStrongPassword"
+      }'
+```
+
+### Response
+
+```json
+{
+  "isSuccess": true,
+  "entity": {
+    "id": 11,
+    "name": "user1",
+    "username": "user1",
+    "email": "user@mail.com",
+    "idatetime": "2021-12-06T22:43:28.433",
+    "udatetime": null,
+    "iuser": "1"
+  },
+  "list": null,
+  "totalCount": 0,
+  "validationErrorList": null,
+  "exceptionMessage": null
+}
+```
+
+## Logout
+
+### Request
+
+`GET Auth/logout`
+
+```
+curl -X GET "https://localhost:44359/api/Auth/logout" -H  "accept: text/plain"
+```
+
+### Response
+
+```json
+{{
+    "isSuccess": true,
+    "entity": false,
+    "list": null,
+    "totalCount": 0,
+    "validationErrorList": null,
+    "exceptionMessage": null
+}
+```
+
+## Pagination
+
+- MaxPageSize can be set in the Infrastructure/PaginationFilter. Default is 15.
+- Default page number is set to 1.
+
+### Request
+
+`GET Product?pageSize=1&pageNumber=1`
+
+```
+curl --location --request GET 'https://localhost:44359/api/Product?pageSize=1&pageNumber=1'
+```
+
+### Response
+
+```json
+{
+  "isSuccess": true,
+  "entity": null,
+  "list": [
+    {
+      "id": 1,
+      "category": "category1",
+      "name": "product1",
+      "displayName": "product1",
+      "description": "product1",
+      "price": "999,90 ₺",
+      "idatetime": "2021-12-07T17:20:29.057",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1"
+    }
+  ],
+  "totalCount": 1,
+  "validationErrorList": null,
+  "exceptionMessage": null
+}
+```
+
+## Sorting
+
+- SORTING_PARAMETER can be set to price, name, displayName, stock, idatetime etc. (some might not work :/ )
+- Default sorting is set to ascending.
+- Changing sorting to descending is not supported yet.
+
+### Request
+
+`GET Product?sorting={SORTING_PARAMETER}`
+
+```
+curl --location --request GET 'https://localhost:44359/api/Product?sorting={SORTING_PARAMETER}'
+```
+
+### Response
+
+```json
+{
+  "isSuccess": true,
+  "entity": null,
+  "list": [
+    {
+      "id": 1,
+      "category": "category1",
+      "name": "product1",
+      "displayName": "product1",
+      "description": "product1",
+      "price": "999,90 ₺",
+      "idatetime": "2021-12-07T17:20:29.057",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1"
+    },
+    {
+      "id": 1,
+      "category": "category1",
+      "name": "product2",
+      "displayName": "product2",
+      "description": "product2",
+      "price": "1999,90 ₺",
+      "idatetime": "2021-12-07T17:20:29.057",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1"
+    }
+  ],
+  "totalCount": 2,
+  "validationErrorList": null,
+  "exceptionMessage": null
+}
+```
+
+## Paging and Sorting
+
+### Request
+
+`GET Product?pageSize=1&pageNumber=1&sorting={SORTING_PARAMETER}`
+
+```
+curl --location --request GET 'https://localhost:44359/api/Product?pageSize=1&pageNumber=1&sorting={SORTING_PARAMETER}'
+```
+
+### Response
+
+```json
+{
+  "isSuccess": true,
+  "entity": null,
+  "list": [
+    {
+      "id": 1,
+      "category": "category1",
+      "name": "product1",
+      "displayName": "product1",
+      "description": "product1",
+      "price": "999,90 ₺",
+      "idatetime": "2021-12-07T17:20:29.057",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1"
+    }
+  ],
+  "totalCount": 1,
+  "validationErrorList": null,
+  "exceptionMessage": null
+}
+```
 
 ### Tech Stack
 

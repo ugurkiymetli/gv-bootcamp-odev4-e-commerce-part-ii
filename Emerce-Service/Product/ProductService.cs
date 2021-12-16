@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Emerce_DB;
+using Emerce_Extension;
 using Emerce_Model;
 using Emerce_Model.Product;
 using Emerce_Service.Validator;
@@ -71,7 +72,7 @@ namespace Emerce_Service.Product
         //}
 
         //Get Products - takes pageSize and pageNumber inputs, max pageSize is 25.
-        public General<ProductViewModel> Get( int pageSize, int pageNumber )
+        public General<ProductViewModel> Get( int pageNumber, int pageSize )
         {
             var result = new General<ProductViewModel>();
             using ( var service = new EmerceContext() )
@@ -85,7 +86,45 @@ namespace Emerce_Service.Product
                     .OrderBy(p => p.Id);
                 result.List = mapper.Map<List<ProductViewModel>>(data);
                 result.IsSuccess = true;
-                result.TotalCount = data.Count();
+                result.TotalCount = service.Product.Where(p => p.IsActive && !p.IsDeleted).Count();
+            }
+            return result;
+        }
+        //Get Products - Sorted 
+        public General<ProductViewModel> GetSorted( string sorting )
+        {
+            var result = new General<ProductViewModel>();
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.Product
+                    .Include(p => p.Category)
+                    .Where(p => p.IsActive && !p.IsDeleted)
+                    .Include(p => p.IuserNavigation)
+                    .OrderBy(sorting, false);
+                result.List = mapper.Map<List<ProductViewModel>>(data);
+                result.IsSuccess = true;
+                result.TotalCount = service.Product.Where(p => p.IsActive && !p.IsDeleted).Count();
+            }
+
+            return result;
+        }
+
+        //Get Product - Paging + Sorting 
+        public General<ProductViewModel> GetPagesSorted( int pageNumber, int pageSize, string sorting )
+        {
+            var result = new General<ProductViewModel>();
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.Product
+                    .Include(p => p.Category)
+                    .Where(p => p.IsActive && !p.IsDeleted)
+                    .Include(p => p.IuserNavigation)
+                    .OrderBy(sorting, false)//false = ascending , true = descending
+                    .Skip(( pageNumber - 1 ) * pageSize)
+                    .Take(pageSize);
+                result.List = mapper.Map<List<ProductViewModel>>(data);
+                result.IsSuccess = true;
+                result.TotalCount = service.Product.Where(p => p.IsActive && !p.IsDeleted).Count();
             }
             return result;
         }

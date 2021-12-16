@@ -6,7 +6,9 @@ namespace Emerce_Service.Product
     {
         public General<ProductViewModel> Insert( ProductCreateModel newProduct );
         //public General<ProductViewModel> Get();
-        public General<ProductViewModel> Get( int pageSize, int pageNumber );
+        public General<ProductViewModel> Get( int pageNumber, int pageSize );
+        public General<ProductViewModel> GetSorted( string sorting );
+        public General<ProductViewModel> GetPagesSorted( int pageNumber, int pageSize, string sorting );
         public General<ProductViewModel> GetById( int id );
         public General<ProductViewModel> Delete( int id );
         public General<ProductUpdateModel> Update( ProductUpdateModel updatedProduct, int id );

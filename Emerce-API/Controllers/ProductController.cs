@@ -18,7 +18,7 @@ namespace Emerce_API.Controllers
         {
             productService = _productService;
         }
-        //Insert Product -  !!! PLEASE Change return type from ProductCreateModel to ProductViewModel !!!
+        //Insert Product
         [HttpPost]
         public General<ProductViewModel> Insert( [FromBody] ProductCreateModel newProduct )
         {
@@ -36,18 +36,50 @@ namespace Emerce_API.Controllers
 
         //Get Product 'Pagination'
         [HttpGet]
-
-        public General<ProductViewModel> Get( [FromQuery] PaginationFilter filter )
+        public General<ProductViewModel> Get( [FromQuery] int pageNumber, int pageSize, string sorting )
         {
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var response = productService.Get(validFilter.PageSize, validFilter.PageNumber);
-            if ( filter.PageSize > filter.maxPageSize )
+            var response = new General<ProductViewModel>();
+            if ( pageNumber > 0 && pageSize > 0 && sorting is null )
+                return GetPages(pageNumber, pageSize);
+            else if ( pageNumber == 0 && pageSize == 0 && sorting is not null )
+                return GetSorted(sorting);
+            else if ( pageNumber == 0 && pageSize == 0 && sorting is null )
             {
-                response.ExceptionMessage = $"Page number cannot be bigger than {filter.maxPageSize}";
+                response.ExceptionMessage = "Please provide either page number & page size or sorting parameter!";
+                return response;
+            }
+            return GetPagesSorted(pageNumber, pageSize, sorting);
+        }
+        private General<ProductViewModel> GetPagesSorted( int pageNumber, int pageSize, string sorting )
+        {
+            var validFilter = new PaginationFilter(pageNumber, pageSize);
+            return productService.GetPagesSorted(validFilter.PageNumber, validFilter.PageSize, sorting);
+        }
+        private General<ProductViewModel> GetSorted( string sorting )
+        {
+            return productService.GetSorted(sorting);
+        }
+        private General<ProductViewModel> GetPages( int pageNumber, int pageSize )
+        {
+            var validFilter = new PaginationFilter(pageNumber, pageSize);
+            var response = productService.Get(validFilter.PageNumber, validFilter.PageSize);
+            if ( pageSize > validFilter.maxPageSize )
+            {
+                response.ExceptionMessage = $"Page number cannot be bigger than {validFilter.maxPageSize}";
+            }
+            if ( response.List.Count == 0 )
+            {
+                response.IsSuccess = false;
+                response.ExceptionMessage = $"There are { response.TotalCount } records. You requested {validFilter.PageNumber * validFilter.PageSize} records. :(";
             }
             return response;
         }
 
+        //[HttpGet]
+        //public General<ProductViewModel> GetSorted( [FromQuery] string sorting )
+        //{
+        //    return productService.GetSorted(sorting);
+        //}
 
         //Get Product By Id
         [HttpGet("{id}")]
