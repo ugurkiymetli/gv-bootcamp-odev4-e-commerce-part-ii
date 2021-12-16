@@ -129,6 +129,28 @@ namespace Emerce_Service.Product
             return result;
         }
 
+        //Get Product - Filtering
+        public General<ProductViewModel> GetFiltered( int minPrice, int maxPrice )
+        {
+            var result = new General<ProductViewModel>();
+            using ( var service = new EmerceContext() )
+            {
+                var data = service.Product
+                    .Include(p => p.Category)
+                    .Where(p => p.IsActive && !p.IsDeleted && p.Price >= minPrice && p.Price <= maxPrice)
+                    .Include(p => p.IuserNavigation)
+                    .OrderBy(p => p.Price);
+
+                result.List = mapper.Map<List<ProductViewModel>>(data);
+                result.IsSuccess = true;
+                result.TotalCount = service.Product.Where(p => p.IsActive && !p.IsDeleted).Count();
+            }
+            return result;
+
+        }
+
+
+
         //Get Product By Id
         public General<ProductViewModel> GetById( int id )
         {

@@ -36,16 +36,23 @@ namespace Emerce_API.Controllers
 
         //Get Product 'Pagination'
         [HttpGet]
-        public General<ProductViewModel> Get( [FromQuery] int pageNumber, int pageSize, string sorting )
+        public General<ProductViewModel> Get( [FromQuery] int pageNumber, int pageSize, string sorting, int minPrice, int maxPrice )
         {
             var response = new General<ProductViewModel>();
-            if ( pageNumber > 0 && pageSize > 0 && sorting is null )
+            //only pagination - sorting and filter null
+            if ( pageNumber > 0 && pageSize > 0 && sorting is null && minPrice == 0 && maxPrice == 0 )
                 return GetPages(pageNumber, pageSize);
-            else if ( pageNumber == 0 && pageSize == 0 && sorting is not null )
+            //only sorting - pagination and filter null
+            else if ( pageNumber == 0 && pageSize == 0 && sorting is not null && minPrice == 0 && maxPrice == 0 )
                 return GetSorted(sorting);
+            //only filtering - pagination and sorting null
             else if ( pageNumber == 0 && pageSize == 0 && sorting is null )
             {
-                response.ExceptionMessage = "Please provide either page number & page size or sorting parameter!";
+                return GetFiltered(minPrice, maxPrice);
+            }
+            else if ( pageNumber == 0 && pageSize == 0 && sorting is null && minPrice == 0 && maxPrice == 0 )
+            {
+                response.ExceptionMessage = "Please provide either page number & page size or filter / sorting parameter!";
                 return response;
             }
             return GetPagesSorted(pageNumber, pageSize, sorting);
@@ -71,6 +78,28 @@ namespace Emerce_API.Controllers
             {
                 response.IsSuccess = false;
                 response.ExceptionMessage = $"There are { response.TotalCount } records. You requested {validFilter.PageNumber * validFilter.PageSize} records. :(";
+            }
+            return response;
+        }
+
+        private General<ProductViewModel> GetFiltered( int minPrice, int maxPrice )
+        {
+            var response = new General<ProductViewModel>();
+            if ( minPrice < 0 || maxPrice < 0 )
+            {
+                response.ExceptionMessage = $"Values cannot be negative!";
+                return response;
+            }
+            else if ( minPrice > maxPrice )
+            {
+                response.ExceptionMessage = $"Thats not right! {minPrice}!>{maxPrice}";
+                return response;
+            }
+            response = productService.GetFiltered(minPrice, maxPrice);
+            if ( response.List.Count == 0 )
+            {
+                response.IsSuccess = false;
+                response.ExceptionMessage = $"No product found with price range: {minPrice}-{maxPrice}.";
             }
             return response;
         }

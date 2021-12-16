@@ -736,6 +736,57 @@ curl --location --request GET 'https://localhost:44359/api/Product?sorting={SORT
 }
 ```
 
+## Filtering
+
+- Filtering works with price for now.
+- minPrice and maxPrice parameters work.
+
+### Request
+
+`GET Product?minPrice=1&maxPrice=10`
+
+```
+curl -X GET "https://localhost:44359/api/Product?minPrice=1&maxPrice=10"
+```
+
+### Response
+
+```json
+{
+  "isSuccess": true,
+  "entity": null,
+  "list": [
+    {
+      "id": 1,
+      "category": "category1",
+      "name": "product1",
+      "displayName": "product1",
+      "description": "product1",
+      "price": "1,00",
+      "stock": 1,
+      "idatetime": "2021-11-09T08:00:00",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1@mail.com"
+    },
+    {
+      "id": 2,
+      "category": "category1",
+      "name": "product2",
+      "displayName": "product2",
+      "description": "product2",
+      "price": "7,30",
+      "stock": 1,
+      "idatetime": "2021-11-09T08:00:00",
+      "udatetime": "0001-01-01T00:00:00",
+      "iuser": "user1@mail.com"
+    }
+  ],
+  "totalCount": 2,
+  "validationErrorList": null,
+  "exceptionMessage": null
+}
+```
+
 ## Paging and Sorting
 
 ### Request
